@@ -26,7 +26,7 @@ namespace QuestLimitFixer
                 var count = flCopy.Items.Count;
                 foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides() )
                 {
-                    if ( quest.Objectives.Count > 0 && quest.EditorID != null && quest.Name != null )
+                    if ( !flCopy.Items.Contains(quest) && quest.Objectives.Count > 0 && quest.EditorID != null && quest.Name != null )
                     {
                         flCopy.Items.Add(quest);
                     }
