@@ -8,6 +8,6 @@ namespace QuestLimitFixer
         public const string FormListEditorID = "AllVanillaQuests";
         public const string PluginName = "Quest Journal Limit Bug Fixer.esp";
         public static ModKey PluginKey = ModKey.FromNameAndExtension(PluginName);
-        public static FormKey TargetKey = PluginKey.MakeFormKey(0x001800);
+        public static FormKey TargetKey = PluginKey.MakeFormKey(0x000800);
     }
 }
