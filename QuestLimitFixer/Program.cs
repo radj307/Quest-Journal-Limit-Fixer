@@ -20,9 +20,12 @@ namespace QuestLimitFixer
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
             // Create a FormList and set its Editor ID
-            FormList list = new(state.PatchMod.GetNextFormKey(), state.PatchMod.SkyrimRelease);
-            list.EditorID = Constants.FormListEditorID;
+            FormList list = new(state.PatchMod.GetNextFormKey(), state.PatchMod.SkyrimRelease)
+            {
+                EditorID = Constants.FormListEditorID
+            };
 
+            // iterate through winning quest overrides
             foreach ( var quest in state.LoadOrder.ListedOrder.Quest().WinningOverrides() )
             {
                 if ( quest.EditorID == null || quest.Name == null ) // skip quests with null editor IDs / names
@@ -31,8 +34,6 @@ namespace QuestLimitFixer
                 if ( quest.Objectives.Count > 0 ) // if quest has objectives, add it to the list.
                     list.Items.Add(quest);
             }
-
-            // list.Items.Reverse();
 
             // Add the FormList to the target patcher
             state.PatchMod.FormLists.GetOrAddAsOverride(list);
