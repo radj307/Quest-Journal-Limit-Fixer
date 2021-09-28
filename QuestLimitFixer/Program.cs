@@ -31,7 +31,7 @@ namespace QuestLimitFixer
                         flCopy.Items.Add(quest);
                     }
                 }
-                count -= flCopy.Items.Count;
+                count = flCopy.Items.Count - count;
                 if ( count > 0 )
                 {
                     state.PatchMod.FormLists.Set(flCopy);
