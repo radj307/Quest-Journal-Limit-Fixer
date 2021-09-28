@@ -30,7 +30,7 @@ namespace QuestLimitFixer
                 {
                     if ( quest.Objectives.Count == 0 || quest.EditorID == null || quest.Name == null )
                         continue;
-                    formlistCopy.Items.Add(quest);
+                    formlistCopy.Items.Add(quest); // else add quest to formlist
                 }
                 // get the number of additions
                 var count = formlistCopy.Items.Count - formlist.Items.Count;
@@ -44,7 +44,7 @@ namespace QuestLimitFixer
                     Console.WriteLine("Patcher didn't find any additional quests to add.");
                 }
             }
-            else
+            else // failed to resolve formlist
             {
                 throw new Exception($"Couldn't resolve target formlist, is \"{Constants.PluginName}\" installed?");
             }
