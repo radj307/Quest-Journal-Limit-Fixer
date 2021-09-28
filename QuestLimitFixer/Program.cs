@@ -23,7 +23,6 @@ namespace QuestLimitFixer
             foreach ( var fl in state.LoadOrder.PriorityOrder.FormList().WinningOverrides().Where(fl => fl.FormKey.ModKey == Constants.PluginKey) )
             {
                 var flCopy = fl.DeepCopy();
-                flCopy.Items.ForEach(i => Console.WriteLine($"{i}"));
                 var count = flCopy.Items.Count;
                 Console.WriteLine($"List size is currently {count}");
                 foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides().Where(q => q.Objectives.Count > 0 && !flCopy.Items.Contains(q)) )
