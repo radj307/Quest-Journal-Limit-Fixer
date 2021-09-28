@@ -20,16 +20,14 @@ namespace QuestLimitFixer
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            foreach ( var fl in state.LoadOrder.PriorityOrder.FormList().WinningOverrides().Where(fl => fl.FormKey.ModKey == Constants.PluginKey) )
+            foreach ( var fl in state.LoadOrder.PriorityOrder.FormList().WinningOverrides().Where(fl => fl.FormKey.ModKey.Equals(Constants.PluginKey)) )
             {
                 var flCopy = fl.DeepCopy();
                 var count = flCopy.Items.Count;
-                Console.WriteLine($"List size is currently {count}");
-                foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides().Where(q => q.Objectives.Count > 0 && !flCopy.Items.Contains(q)) )
+                foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides().Where(q => !flCopy.Items.Contains(q) && q.Objectives.Count > 0) )
                 {
                     flCopy.Items.Add(quest);
                 }
-                Console.WriteLine($"List size is now {flCopy.Items.Count}");
                 count = flCopy.Items.Count - count;
                 if ( count > 0 )
                 {
