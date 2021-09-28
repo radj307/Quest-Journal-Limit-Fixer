@@ -35,9 +35,10 @@ namespace QuestLimitFixer
                     list.Items.Add(quest);
             }
 
-
+            SkyrimMod mod = new(Constants.PluginKey, state.PatchMod.SkyrimRelease);
+            mod.FormLists.GetOrAddAsOverride(list);
             // Add the FormList to the target patcher
-            state.PatchMod.FormLists.GetOrAddAsOverride(list);
+            //state.PatchMod.FormLists.GetOrAddAsOverride(list);
 
             Console.WriteLine($"Added {list.Items.Count} quests to the list.");
         }
