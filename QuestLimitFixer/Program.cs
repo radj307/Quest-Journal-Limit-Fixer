@@ -20,7 +20,7 @@ namespace QuestLimitFixer
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
             // Create a FormList and set its Editor ID
-            FormList list = new(state.PatchMod.GetNextFormKey(), state.PatchMod.SkyrimRelease)
+            FormList list = new(Constants.FormListLink.FormKey, state.PatchMod.SkyrimRelease)
             {
                 EditorID = Constants.FormListEditorID
             };
@@ -34,6 +34,7 @@ namespace QuestLimitFixer
                 if ( quest.Objectives.Count > 0 ) // if quest has objectives, add it to the list.
                     list.Items.Add(quest);
             }
+
 
             // Add the FormList to the target patcher
             state.PatchMod.FormLists.GetOrAddAsOverride(list);
