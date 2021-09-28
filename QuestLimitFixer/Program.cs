@@ -20,7 +20,7 @@ namespace QuestLimitFixer
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
             // Create a FormList and set its Editor ID
-            FormList list = new(Constants.FormListLink.FormKey, state.PatchMod.SkyrimRelease)
+            FormList list = new(Constants.FormListKey, state.PatchMod.SkyrimRelease)
             {
                 EditorID = Constants.FormListEditorID
             };
