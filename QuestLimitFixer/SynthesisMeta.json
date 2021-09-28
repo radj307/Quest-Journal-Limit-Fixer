@@ -1,7 +1,7 @@
 {
   "Nickname": "Quest Journal Limit Bug Fixer",
-  "Visibility": "Hidden",
-  "OneLineDescription": "",
+  "Visibility": "Visible",
+  "OneLineDescription": "Synthesis version of the Quest Journal Limit Bug Fixer xEdit patch.",
   "LongDescription": "Requires Quest Journal Limit Bug Fixer: https://www.nexusmods.com/skyrimspecialedition/mods/56130",
   "PreferredAutoVersioning": "Default",
   "RequiredMods": [
