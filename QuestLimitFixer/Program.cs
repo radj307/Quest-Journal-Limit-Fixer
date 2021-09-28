@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Mutagen.Bethesda;
+using Mutagen.Bethesda.Plugins;
 using Mutagen.Bethesda.Skyrim;
 using Mutagen.Bethesda.Synthesis;
 
@@ -20,27 +21,33 @@ namespace QuestLimitFixer
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            foreach ( var fl in state.LoadOrder.PriorityOrder.FormList().WinningOverrides().Where(fl => fl.FormKey.ModKey.Equals(Constants.PluginKey)) )
+            if ( state.LinkCache.TryResolve<IFormListGetter>(Constants.TargetKey, out var formlist) )
             {
-                var flCopy = fl.DeepCopy();
-                var count = flCopy.Items.Count;
-                foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides().Where(q => !flCopy.Items.Contains(q) && q.Objectives.Count > 0) )
+                // Copy the default formlist
+                var formlistCopy = formlist.DeepCopy();
+                // iterate through all non-duplicate quests
+                foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides().Where(q => !formlist.Items.Contains(q)) )
                 {
-                    flCopy.Items.Add(quest);
+                    if ( quest.Objectives.Count == 0 || quest.EditorID == null || quest.Name == null )
+                        continue;
+                    formlistCopy.Items.Add(quest);
                 }
-                count = flCopy.Items.Count - count;
+                // get the number of additions
+                var count = formlistCopy.Items.Count - formlist.Items.Count;
                 if ( count > 0 )
                 {
-                    state.PatchMod.FormLists.Set(flCopy);
-                    Console.WriteLine($"Added {count} quests to the list.");
+                    state.PatchMod.FormLists.Set(formlistCopy); // add formlistCopy as an override to the patcher.
+                    Console.WriteLine($"Successfully added {count} quests to the patch.");
                 }
                 else
                 {
-                    Console.WriteLine($"FormList size changed by {count}.");
+                    Console.WriteLine("Patcher didn't find any additional quests to add.");
                 }
-                return;
             }
-            throw new Exception("Failed, couldn't find target FormList.");
+            else
+            {
+                throw new Exception($"Couldn't resolve target formlist, is \"{Constants.PluginName}\" installed?");
+            }
         }
     }
 }
