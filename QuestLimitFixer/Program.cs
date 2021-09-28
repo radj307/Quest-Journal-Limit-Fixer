@@ -23,13 +23,11 @@ namespace QuestLimitFixer
             foreach ( var fl in state.LoadOrder.PriorityOrder.FormList().WinningOverrides().Where(fl => fl.FormKey.ModKey == Constants.PluginKey) )
             {
                 var flCopy = fl.DeepCopy();
+                flCopy.Items.ForEach(i => Console.WriteLine($"{i}"));
                 var count = flCopy.Items.Count;
-                foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides() )
+                foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides().Where(q => q.Objectives.Count > 0 && !flCopy.Items.Contains(q.FormKey)) )
                 {
-                    if ( !flCopy.Items.Contains(quest) && quest.Objectives.Count > 0 && quest.EditorID != null && quest.Name != null )
-                    {
-                        flCopy.Items.Add(quest);
-                    }
+                    flCopy.Items.Add(quest);
                 }
                 count = flCopy.Items.Count - count;
                 if ( count > 0 )
@@ -43,19 +41,7 @@ namespace QuestLimitFixer
                 }
                 return;
             }
-            Console.WriteLine("Failed, couldn't find target FormList.");
-            //foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides() )
-            //{
-            //    if ( quest.EditorID == null || quest.Name == null )
-            //        continue;
-            //    if ( quest.Objectives.Count > 0 )
-            //    {
-            //        list.Items.Add(quest);
-            //    }
-            //}
-
-            //   state.PatchMod.FormLists.GetOrAddAsOverride(list);
-            //   Console.WriteLine($"Added {counter} quests to the list.");
+            throw new Exception("Failed, couldn't find target FormList.");
         }
     }
 }
