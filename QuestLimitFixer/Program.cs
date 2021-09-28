@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using Mutagen.Bethesda;
 using Mutagen.Bethesda.Skyrim;
@@ -19,24 +20,42 @@ namespace QuestLimitFixer
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            int counter = 0;
-
-            FormList list = new(state.PatchMod.GetNextFormKey(), state.PatchMod.SkyrimRelease);
-            list.EditorID = Constants.FormListEditorID;
-
-            foreach ( var quest in state.LoadOrder.ListedOrder.Quest().WinningOverrides() )
+            foreach ( var fl in state.LoadOrder.PriorityOrder.FormList().WinningOverrides().Where(fl => fl.FormKey.ModKey == Constants.PluginKey) )
             {
-                if ( quest.EditorID == null || quest.Name == null )
-                    continue;
-                if ( quest.Objectives.Count > 0 )
+                var flCopy = fl.DeepCopy();
+                var count = flCopy.Items.Count;
+                foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides() )
                 {
-                    list.Items.Add(quest);
-                    ++counter;
+                    if ( quest.Objectives.Count > 0 && quest.EditorID != null && quest.Name != null )
+                    {
+                        flCopy.Items.Add(quest);
+                    }
                 }
+                count -= flCopy.Items.Count;
+                if ( count > 0 )
+                {
+                    state.PatchMod.FormLists.Set(flCopy);
+                    Console.WriteLine($"Added {count} quests to the list.");
+                }
+                else
+                {
+                    Console.WriteLine($"FormList size changed by {count}.");
+                }
+                return;
             }
+            Console.WriteLine("Failed, couldn't find target FormList.");
+            //foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides() )
+            //{
+            //    if ( quest.EditorID == null || quest.Name == null )
+            //        continue;
+            //    if ( quest.Objectives.Count > 0 )
+            //    {
+            //        list.Items.Add(quest);
+            //    }
+            //}
 
-            state.PatchMod.FormLists.GetOrAddAsOverride(list);
-            Console.WriteLine($"Added {counter} quests to the list.");
+            //   state.PatchMod.FormLists.GetOrAddAsOverride(list);
+            //   Console.WriteLine($"Added {counter} quests to the list.");
         }
     }
 }
