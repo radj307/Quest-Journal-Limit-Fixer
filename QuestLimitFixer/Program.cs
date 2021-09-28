@@ -12,35 +12,31 @@ namespace QuestLimitFixer
         {
             return await SynthesisPipeline.Instance
                 .AddPatch<ISkyrimMod, ISkyrimModGetter>(RunPatch)
-                .SetTypicalOpen(GameRelease.SkyrimSE, Constants.PluginName)
+                .SetTypicalOpen(GameRelease.SkyrimSE, "Quest Journal Limit Bug Fixer.esp")
                 .Run(args)
                 .ConfigureAwait(false);
         }
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            // Create a FormList and set its Editor ID
-            FormList list = new(Constants.FormListKey, state.PatchMod.SkyrimRelease)
-            {
-                EditorID = Constants.FormListEditorID
-            };
+            int counter = 0;
 
-            // iterate through winning quest overrides
+            FormList list = new(state.PatchMod.GetNextFormKey(), state.PatchMod.SkyrimRelease);
+            list.EditorID = Constants.FormListEditorID;
+
             foreach ( var quest in state.LoadOrder.ListedOrder.Quest().WinningOverrides() )
             {
-                if ( quest.EditorID == null || quest.Name == null ) // skip quests with null editor IDs / names
+                if ( quest.EditorID == null || quest.Name == null )
                     continue;
-
-                if ( quest.Objectives.Count > 0 ) // if quest has objectives, add it to the list.
+                if ( quest.Objectives.Count > 0 )
+                {
                     list.Items.Add(quest);
+                    ++counter;
+                }
             }
 
-            SkyrimMod mod = new(Constants.PluginKey, state.PatchMod.SkyrimRelease);
-            mod.FormLists.GetOrAddAsOverride(list);
-            // Add the FormList to the target patcher
-            //state.PatchMod.FormLists.GetOrAddAsOverride(list);
-
-            Console.WriteLine($"Added {list.Items.Count} quests to the list.");
+            state.PatchMod.FormLists.GetOrAddAsOverride(list);
+            Console.WriteLine($"Added {counter} quests to the list.");
         }
     }
 }
