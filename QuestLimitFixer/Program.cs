@@ -21,7 +21,7 @@ namespace QuestLimitFixer
 
         public static void RunPatch(IPatcherState<ISkyrimMod, ISkyrimModGetter> state)
         {
-            if ( state.LinkCache.TryResolve<IFormListGetter>(Constants.TargetKey, out var formlist) )
+            if ( TargetKey.TryResolveFormList(state.LinkCache, out var formlist) )
             {
                 // Copy the default formlist
                 var formlistCopy = formlist.DeepCopy();
@@ -34,12 +34,12 @@ namespace QuestLimitFixer
                 }
                 // get the number of additions
                 var count = formlistCopy.Items.Count - formlist.Items.Count;
-                if ( count > 0 )
+                if ( count > 0 ) // changes were made
                 {
-                    state.PatchMod.FormLists.Set(formlistCopy); // add formlistCopy as an override to the patcher.
+                    state.PatchMod.FormLists.Set(formlistCopy); // add formlistCopy as an override to the patch
                     Console.WriteLine($"Successfully added {count} quests to the patch.");
                 }
-                else
+                else // no changes made
                 {
                     Console.WriteLine("Patcher didn't find any additional quests to add.");
                 }
