@@ -25,10 +25,12 @@ namespace QuestLimitFixer
                 var flCopy = fl.DeepCopy();
                 flCopy.Items.ForEach(i => Console.WriteLine($"{i}"));
                 var count = flCopy.Items.Count;
+                Console.WriteLine($"List size is currently {count}");
                 foreach ( var quest in state.LoadOrder.PriorityOrder.Quest().WinningOverrides().Where(q => q.Objectives.Count > 0 && !flCopy.Items.Contains(q)) )
                 {
                     flCopy.Items.Add(quest);
                 }
+                Console.WriteLine($"List size is now {flCopy.Items.Count}");
                 count = flCopy.Items.Count - count;
                 if ( count > 0 )
                 {
